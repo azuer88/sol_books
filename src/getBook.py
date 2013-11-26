@@ -34,6 +34,7 @@ def makebook(storyid):
 	
 	count = b.chapter_count
 	cur = 1
+	last_title = ""
 	for (title, soup, chapter_id, page) in b.getPages():
 		logging.debug("adding (%d/%d) %s  [%s] %s" % (cur, count, title, chapter_id, page))
 		print "\r", e.filename, "  ", bar(cur, count), "(%d/%d)" % (cur, count),
@@ -44,8 +45,9 @@ def makebook(storyid):
 		if page:
 			x.part = page
 			x.title += ' Part ' + page
-		else:
+		if last_title<>title:
 			cur += 1
+			last_title = title
 		x.id = "c" + chapter_id
 		x.content = soup.prettify()
 		e.addChapter(x)
