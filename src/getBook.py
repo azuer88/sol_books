@@ -45,9 +45,13 @@ def makebook(storyid):
 		if page:
 			x.part = page
 			x.title += ' Part ' + page
+		# if last title is different from current title
 		if last_title<>title:
+			# increment progress
 			cur += 1
 			last_title = title
+		# if title==last_title, we are dealing with pages
+
 		x.id = "c" + chapter_id
 		x.content = soup.prettify()
 		e.addChapter(x)
