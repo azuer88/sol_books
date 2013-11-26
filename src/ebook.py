@@ -1,4 +1,3 @@
-
 from lxml import etree as ET
 import lxml.builder as builder
 from lxml import html as HT
@@ -25,6 +24,9 @@ def slugify(text, separator="-"):
   return ret.strip()
 		
 class ContainerXML(object):
+	"""
+	handles the creation of the 'container.xml' 
+	"""
 	def __init__(self):
 		self.encoding = 'utf-8'
 		self.ns = "urn:oasis:names:tc:opendocument:xmlns:container"
@@ -43,6 +45,11 @@ class ContainerXML(object):
 		return ET.tostring(root, pretty_print=True, xml_declaration=True, encoding=self.encoding)
 		
 class ContainerOPF(object):
+	"""
+	Handles the creation of content.opf
+		it has attribues 'manifest' and 'spines' which are lists of tuples
+		to add items, use 'addManifest' and addSpine', respectively.
+	"""
 	def __init__(self):
 		self.encoding = "utf-8"
 		self.ns_opf = "http://www.idpf.org/2007/opf"
@@ -117,6 +124,9 @@ class ContainerOPF(object):
 		return ET.tostring(root, xml_declaration=True, pretty_print=True, encoding=self.encoding)
 		
 class XHTMLFile(object):
+	"""
+	simplifies creation of xhtml files.
+	"""
 	def __init__(self):
 		self.doctype="""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">"""
@@ -187,6 +197,9 @@ class XHTMLFile(object):
 		f.close()
 		
 class TOCNCX(object):
+	"""
+	Handles the creation of toc.ncx
+	"""
 	def __init__(self):
 		self.doctype = """<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
                  "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">"""
@@ -243,6 +256,10 @@ class TOCNCX(object):
 		return ET.tostring(root, xml_declaration=True, pretty_print=True, encoding=self.encoding, doctype=self.doctype)
 		
 class EPub(object):
+	"""
+	Handles the creation of the actual epub file.
+		addition of cover image must be done first, since order of adding chapter is significant
+	"""
 	TEXT = 'Text'
 	IMAGES = 'Images'
 	STYLES = 'Styles'
