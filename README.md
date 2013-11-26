@@ -1,4 +1,4 @@
 sol_books
 =========
 
-SOL ebook maker
+Python application to create SOL ebooks.
