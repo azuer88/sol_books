@@ -45,18 +45,36 @@ def makebook(storyid):
 		if page:
 			x.part = page
 			x.title += ' Part ' + page
-		# if last title is different from current title
 		if last_title<>title:
-			# increment progress
 			cur += 1
 			last_title = title
-		# if title==last_title, we are dealing with pages
-
 		x.id = "c" + chapter_id
 		x.content = soup.prettify()
 		e.addChapter(x)
 	e.close()	
 	print "\n",
+
+def print_missing_data():
+	print ".%s%s folder must exists" % (os.path.sep, 'data')
+	print "it must contain SOL-Mini-Logo.jpg and style.css."
+
+def check_data_folder():
+	if not os.path.isdir(os.path.join(os.getcwd(), 'data')):
+		print_missing_data()
+		return -1
+		
+	if not os.path.exists(os.path.join(os.getcwd(), 'data', 'SOL-Mini-Logo.jpg')):
+		print "Cover page logo image not found in data folder."
+		print_missing_data()
+		return -2
+		
+	if not os.path.exists(os.path.join(os.getcwd(), 'data', 'style.css')):
+		print "CSS stylesheet not found in data folder."
+		print_missing_data()
+		return -3
+		
+	return 0
+	
 
 def main():
 	parser = argparse.ArgumentParser(description='Process story ids and generate epubs from SOL.')
@@ -72,8 +90,15 @@ def main():
 
 	logging.basicConfig(filename=args.log_file, format='%(levelname)s:%(message)s', level=args.debug)
 	
+	# check if data folder exists
+	chk_res = check_data_folder()
+	if (chk_res<>0):
+		return chk_res
+	
 	for id in args.ids:
 		makebook(id)
+		
+	return 0
 
 if __name__ == "__main__":
 	import sys
