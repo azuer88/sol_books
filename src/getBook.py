@@ -5,17 +5,30 @@ import os
 from SOLBook import SOLStory
 from ebook import EPub, XHTMLFile
 from mkcoverpg import MakeCoverPageStr
+from conutils import getTerminalSize
 
-def bar(cur, count, symbol="#"):
-	done_n = (20 * cur) / count
+def bar(cur, count, max_width=28, symbol="#"):
+	logging.debug("bar(%d, %d, max_width=%d, symbol=%s" % (cur, count, max_width, symbol))
+	max_bar_w = max_width - 8 # 8 = 4 (for 100%) +  3 (bracket & spaces) + 1 pad to prevent wrapping
+	done_n = (max_bar_w * cur) / count
 	
 	done = symbol*done_n
-	left = ' ' * (20 - done_n)
+	left = ' ' * (max_bar_w - done_n)
 	
 	percent = cur * 100 / count
 	
-	return "[%s] %d%%" % (done+left, percent)
+	return "[%s] %3d%%" % (done+left, percent)
 	
+def full_justify(leftstr, rightstr):
+	w, h = getTerminalSize()
+	str_w = len(leftstr) + len(rightstr)
+	if  str_w < w:
+		padding = (w - 1) - str_w
+		return leftstr + (" " * padding) + rightstr
+	else:
+		d = w - len(rightstr) - 4
+		return leftstr[:d] + (leftstr[d:] and '...') + rightstr
+		
 
 def makebook(storyid):
 	b = SOLStory(storyid)
@@ -37,7 +50,9 @@ def makebook(storyid):
 	last_title = ""
 	for (title, soup, chapter_id, page) in b.getPages():
 		logging.debug("adding (%d/%d) %s  [%s] %s" % (cur, count, title, chapter_id, page))
-		print "\r", e.filename, "  ", bar(cur, count), "(%d/%d)" % (cur, count),
+
+		barstr = " %s (%d/%d)" % (bar(cur, count), cur, count)
+		print "\r", full_justify(e.filename, barstr),
 		
 		x = XHTMLFile()
 		x.headers.append(("link", None, {"rel": "stylesheet", "type": "text/css", "href": "../Styles/style.css"}))
@@ -52,7 +67,7 @@ def makebook(storyid):
 		x.content = soup.prettify()
 		e.addChapter(x)
 	e.close()	
-	print "\n",
+	print "\r",
 
 def print_missing_data():
 	print ".%s%s folder must exists" % (os.path.sep, 'data')
