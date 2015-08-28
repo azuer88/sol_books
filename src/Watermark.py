@@ -1,4 +1,7 @@
-import Image, ImageEnhance
+#!/usr/bin/env python
+
+from PIL import Image
+from PIL import ImageEnhance
 
 def reduce_opacity(im, opacity):
     """Returns an image with reduced opacity."""
