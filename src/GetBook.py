@@ -3,10 +3,13 @@
 """
 create .epub ebooks from a list of story ids
 """
-#!/usr/bin/python
-import argparse, logging
+
+import argparse
+import logging
+
 
 import os
+
 
 from SOLBook import SOLStory
 from ebook import EPub, XHTMLFile
@@ -18,6 +21,7 @@ from os.path import basename
 import requests
 
 from fileutils import get_base_parent_path
+
 
 def pbar(cur, count, max_width=28, symbol="#"):
     """
@@ -38,24 +42,27 @@ def pbar(cur, count, max_width=28, symbol="#"):
 
     return "[%s] %4d%%" % (done+left, percent)
 
+
 def full_justify(leftstr, rightstr):
     """
     pad with spaces between leftstr and rightstr so rightstr is right-justified
     """
-    width, dummy = getTerminalSize() # pylint: disable-msg=W0633
+    width, dummy = getTerminalSize()  # pylint: disable-msg=W0633
     str_w = len(leftstr) + len(rightstr)
-    if  str_w < width:
+    if str_w < width:
         padding = (width - 2) - str_w
         return leftstr + (" " * padding) + rightstr
     else:
         dim = width - len(rightstr) - 5
         return leftstr[:dim] + (leftstr[dim:] and '...') + rightstr
 
+
 def download_image(imgurl, cookies):
     """
     download an image given its url and return it as string
     """
     return requests.get(imgurl, cookies=cookies)
+
 
 def process_images(epub, soup, cookies):
     """
@@ -66,24 +73,24 @@ def process_images(epub, soup, cookies):
     images = soup.findAll('img')
     for img in images:
         a_tag = Tag(soup, 'img')
-        if img.has_key('alt'):
+        if 'alt' in img:
             a_tag['alt'] = img['alt']
-        if img.has_key('title'):
+        if 'title' in img:
             a_tag['title'] = img['title']
         src = img['src']
         res = download_image(src, cookies)
         a_tag['src'] = epub.add_image(basename(src), res.content)
         img.replaceWith(a_tag)
 
+
 def make_xhtml(title, chapter_id, content, page=None):
     """
     return an XHTMLFile object
     """
     xhtml = XHTMLFile()
-    xhtml.headers.append(("link", None,
-                      {"rel": "stylesheet",
-                      "type": "text/css",
-                      "href": "../Styles/style.css"}))
+    xhtml.headers.append(("link", None, {"rel": "stylesheet",
+                                         "type": "text/css",
+                                         "href": "../Styles/style.css"}))
     xhtml.title = title
     if page:
         xhtml.part = page
@@ -91,6 +98,7 @@ def make_xhtml(title, chapter_id, content, page=None):
     xhtml.c_id = "c" + chapter_id
     xhtml.content = content.prettify()
     return xhtml
+
 
 def get_story(story_id, user, passwd, url):
     """
@@ -101,6 +109,7 @@ def get_story(story_id, user, passwd, url):
         raise Exception("Got modem-router no dsl connection page")
     return story
 
+
 def make_cover(base_dir, title, author, url):
     """
     make a cover image from the title, author, and url, using SOL logo
@@ -110,33 +119,37 @@ def make_cover(base_dir, title, author, url):
     site = url.split(r'/')[2]
     return MakeCoverPageStr(title, author, site, logo)
 
-def make_epub(story, url):
+
+def make_epub(story, url, prefix=""):
     """
     initialize an EPub object with story (filename, title, autor),
     cover, and css style
     """
-    #basedir = os.path.dirname(os.path.abspath(__file__))
+    # basedir = os.path.dirname(os.path.abspath(__file__))
     basedir = get_base_parent_path()
-    epub = EPub(story.title, story.author, url[8:] + str(story.story_id))
+    epub = EPub(story.title, story.author, url[8:] + str(story.story_id),
+                prefix=prefix)
     cover = make_cover(basedir, story.title, story.author, url)
     epub.add_cover_image(cover)
     style_path = os.path.join(basedir, "data", "style.css")
     epub.add_style(os.path.join(basedir, style_path))
     return epub
 
-def makebook(storyid, user, passwd, url):
+
+def makebook(storyid, user, passwd, url, prefix=""):
     """
-    parse a url and make an ebook from the story\
+    parse a url and make an ebook from the story
     """
-    if not url.startswith('http://'):
-        url = 'http://' + url
+    if url:
+        if not url.startswith('http://'):
+            url = 'http://' + url
+
     story = get_story(storyid, user, passwd, url)
 
-    epub = make_epub(story, url)
+    epub = make_epub(story, url, prefix=prefix)
 
-    log_str = "storyid = %s (%s)"% (story.story_id, epub.filename)
+    log_str = "storyid = %s (%s)" % (story.story_id, epub.filename)
     logging.debug(log_str)
-
 
     count = story.chapter_count
     cur = 1
@@ -165,6 +178,7 @@ def print_missing_data():
     print ".%s%s folder must exists" % (os.path.sep, 'data')
     print "it must contain SOL-Mini-Logo.jpg and style.css."
 
+
 def check_data_folder():
     """
     check for data folder, where the css and cover logo should be
@@ -175,7 +189,7 @@ def check_data_folder():
         return -1
 
     if not os.path.exists(os.path.join(basedir,
-                        'data', 'SOL-Mini-Logo.jpg')):
+                                       'data', 'SOL-Mini-Logo.jpg')):
         print "Cover page logo image not found in data folder."
         print_missing_data()
         return -2
@@ -227,7 +241,7 @@ def main():
     if args.user:
         user = args.user
     else:
-        user = 'blueboy88' # becomes 'azuer.dragon.88@gmail.com' by 1/1/2015
+        user = 'blueboy88'  # becomes 'azuer.dragon.88@gmail.com' by 1/1/2015
     if args.passwd:
         passwd = args.passwd
     else:

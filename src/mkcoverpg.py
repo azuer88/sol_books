@@ -16,7 +16,7 @@ FONT_VERDANA = os.path.join(BASE_DIR, 'fonts', 'verdana.ttf')
 FONT_COURIER = os.path.join(BASE_DIR, 'fonts', 'cour.ttf')
 
 def CreateBlank():
-    img = Image.new("RGB", (527, 700), "white")
+    img = Image.new("RGB", (600, 800), "white")
     return img
 
 def AddWatermark(img, mark, offset=0):

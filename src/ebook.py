@@ -353,7 +353,7 @@ class EPub(object): # pylint: disable=too-many-instance-attributes
     TEXT = 'Text'
     IMAGES = 'Images'
     STYLES = 'Styles'
-    def __init__(self, title, author, bookid, folder=""):
+    def __init__(self, title, author, bookid, folder="", prefix=""):
         self.opf = ContainerOPF()
         self.xml = ContainerXML()
         self.ncx = TOCNCX()
@@ -361,6 +361,7 @@ class EPub(object): # pylint: disable=too-many-instance-attributes
         self.author = ""
         self.title = ""
         self.bookid = 0
+        self.prefix = prefix
 
         if folder:
             self.folder = folder
@@ -385,7 +386,7 @@ class EPub(object): # pylint: disable=too-many-instance-attributes
         """
         property filename of the ebook
         """
-        return valid_filename("%s by %s.epub" % (self.title, self.author))
+        return valid_filename("%s%s by %s.epub" % (self.prefix, self.title, self.author))
 
     def close(self):
         """
