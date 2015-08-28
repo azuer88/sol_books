@@ -34,3 +34,10 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# python
+.pyc 
+ignore
+
+# ignore download ebooks
+.epub
