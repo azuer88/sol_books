@@ -41,3 +41,7 @@ ignore
 
 # ignore download ebooks
 .epub
+
+# idea files
+.idea*
+
