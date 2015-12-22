@@ -387,6 +387,7 @@ class EPub(object):  # pylint: disable=too-many-instance-attributes
         self.title = ""
         self.bookid = 0
         self.prefix = prefix
+        self.images = []
 
         if folder:
             self.folder = folder
@@ -470,11 +471,13 @@ class EPub(object):  # pylint: disable=too-many-instance-attributes
         add an image into the epub, from image_str as file named fname
         """
         src = "%s/%s" % (self.IMAGES, fname)
-        if sid is None:
-            sid = sluggify(src)
-        self.opf.add_manifest(sid, src, "image/jpeg")
-        filename = os.path.join("OEBPS", self.IMAGES, fname)
-        self.zip.writestr(filename, image_str)
+        if not src in self.images:
+            if sid is None:
+                sid = sluggify(src)
+            self.opf.add_manifest(sid, src, "image/jpeg")
+            filename = os.path.join("OEBPS", self.IMAGES, fname)
+            self.zip.writestr(filename, image_str)
+            self.images.append(src)
 
         return "../%s" % src
 
