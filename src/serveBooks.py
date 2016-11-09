@@ -2,7 +2,14 @@
 #
 #
 import glob
-import cgi, os, SocketServer, sys, time, urllib
+import cgi
+import os
+import SocketServer
+import sys
+import time
+import urllib
+import signal 
+
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 from operator import itemgetter
@@ -63,10 +70,18 @@ def getLocalIP():
   s.connect(('192.168.1.1', 0)) # connect to router (assumed at 192.168.1.1)
   return s.getsockname()[0]
 
+def signal_handler(signal, frame):
+    print('Bye. (Received SIGINT)')
+    sys.exit(0)
+
+
 def main():
   import argparse
 
   global server_ip
+
+  # register ctrl-c handler
+  signal.signal(signal.SIGINT, signal_handler)
 
   port = 8000
   rootpath = os.getcwd()
