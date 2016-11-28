@@ -9,6 +9,7 @@ import sys
 import time
 import urllib
 import signal 
+import thread
 
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
@@ -17,6 +18,7 @@ import socket
 import qrcode
 
 server_ip = "0.0.0.0"
+httpd = None
 
 def get_date_name(record):
     #return time.strftime("%Y%m%d%H%M%S", record[2])
@@ -72,17 +74,31 @@ def getLocalIP():
 
 def signal_handler(signal, frame):
     print('Bye. (Received SIGINT)')
+    # httpd.terminate()
     sys.exit(0)
 
+
+def shutdownHandler(msg, evt):
+    print "shutdown handler called...(shutting down)."
+    httpd.shutdown()
+    print "shutdown complete"
+    evt.set()
+    return
+
+def terminate(signal, frame):
+    print "terminate signal on thread id: %x" % (id(threading.currentthread()))
+    t = threading.Thread(target=shutdown, args=('SIGTERM received', doneEVT))
+    t.start()
 
 def main():
   import argparse
 
   global server_ip
+  global httpd
 
   # register ctrl-c handler
   signal.signal(signal.SIGINT, signal_handler)
-
+  signal.signal(signal.SIGTERM, terminate)
   port = 8000
   rootpath = os.getcwd()
 

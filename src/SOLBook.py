@@ -70,11 +70,17 @@ def clean_up(soup):
     rm_list = soup.findAll(name='span', attrs={'class': 'conTag'})
     dummy = [obj.extract() for obj in rm_list]
 
+    rm_list = soup.findAll(name='div', attrs={'class': 'pager'})
+    dummy = [obj.extract() for obj in rm_list]
     rm_list = soup.findAll(name='span', attrs={'class': 'pager'})
     dummy = [obj.extract() for obj in rm_list]
 
     # remove date posted
     rm_list = soup.findAll(name='div', attrs={'class': 'date'})
+    dummy = [obj.extract() for obj in rm_list]
+
+    # remove <ul> bottNav
+    rm_list = soup.findAll(name='ul', attrs={'class': 'bottNav'})
     dummy = [obj.extract() for obj in rm_list]
 
     # remove comment / blog section at last section
@@ -87,6 +93,10 @@ def clean_up(soup):
 
     # remove voting div
     rm_list = soup.findAll(name='div', attrs={'class': 'vform'})
+    dummy = [obj.extract() for obj in rm_list]
+
+    # remove header section
+    rm_list = soup.findAll(name='header')
     dummy = [obj.extract() for obj in rm_list]
 
     # remove view series div
@@ -133,10 +143,13 @@ def get_page_links(soup):
     """
     pages = soup.findAll("span", "pager")
     if len(pages) == 0:
+        pages = soup.findAll("div", "pager")
+    if len(pages) == 0:
         return []
+    # print "pager", pages
     # find all <a> except last <a> (next)
     links = pages[0].findAll("a")[:-1]
-
+    # print "links", links 
     return [a["href"] for a in links]
 
 
