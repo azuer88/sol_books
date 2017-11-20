@@ -91,6 +91,10 @@ def clean_up(soup):
     rm_list = soup.findAll(name='div', attrs={'class': 'r'})
     dummy = [obj.extract() for obj in rm_list]
 
+    # remove footer div
+    rm_list = soup.findAll(name='div', attrs={'class': 'fo-div'})
+    dummy = [obj.extract() for obj in rm_list]
+
     # remove voting div
     rm_list = soup.findAll(name='div', attrs={'class': 'vform'})
     dummy = [obj.extract() for obj in rm_list]
@@ -149,7 +153,7 @@ def get_page_links(soup):
     # print "pager", pages
     # find all <a> except last <a> (next)
     links = pages[0].findAll("a")[:-1]
-    # print "links", links 
+    # print "links", links
     return [a["href"] for a in links]
 
 

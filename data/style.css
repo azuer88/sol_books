@@ -3,7 +3,21 @@ h1{font-size:1.2em;}
 h2{font-size:1.1em;}
 h3{font-size:1.0em;}
 h4{font-size:0.9em;font-family:'Neuton',serif;}
-
+.cen{margin-left:auto;margin-right:auto}
+.thick{height:0;border-top:#666 1px solid}
+blockquote{margin-left:1.3em;margin-right:1em;border-left:1px #ddd solid;padding-left:8pt}
+blockquote p{font-family:Courier, monospace}
+.right,.r{text-align:right}
+.just,.j{text-align:justify;text-indent:1.3em}
+.in{text-indent:1.3em}
+.center,.c{text-align:center}
+.red{color:red}
+.blue{color:navy}
+.lblue{color:blue}
+.green{color:green}
+.i{font-style:italic}
+.b{font-weight:bold}
+.bi{font-weight:bold;font-style:italic}
 /** #index-list{width:90%;padding:6px;margin-right:auto;margin-left:auto;border-top:2px silver dotted;border-bottom:2px silver dotted;text-align:left;}
 **/
 .link{font-size:0.88em;margin-right:10px;margin-bottom:10px;white-space:nowrap;font-family:sans-serif;display:inline-block;width:7em;}

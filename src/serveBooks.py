@@ -8,7 +8,7 @@ import SocketServer
 import sys
 import time
 import urllib
-import signal 
+import signal
 import thread
 
 from SimpleHTTPServer import SimpleHTTPRequestHandler
@@ -140,11 +140,16 @@ def main():
   print "serving at %s:%d" % (server_ip, args.port)
   print "root at ", argspath
   url = "http://%s:%d" % (server_ip, args.port)
-  img = qrcode.make(url)
-  img.show()
+  # img = qrcode.make(url)
+  # img.show()
+
+  qr = qrcode.QRCode()
+  qr.add_data(url)
+  qr.make(fit=True)
+  qr.print_ascii(invert=True)
+
   httpd.serve_forever()
 
-  return 0
 
 if __name__ == "__main__":
 	import sys
